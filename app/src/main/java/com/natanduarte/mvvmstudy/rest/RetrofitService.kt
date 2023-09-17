@@ -8,13 +8,13 @@ import retrofit2.http.GET
 
 interface RetrofitService {
 
-    @GET("/activity")
+    @GET("activity")
     fun getActivity(): Call<Activity>
 
     companion object {
         private val retrofitService: RetrofitService by lazy {
             val retrofit = Retrofit.Builder()
-                .baseUrl("https://www.boredapi.com/api")
+                .baseUrl("https://www.boredapi.com/api/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
 
