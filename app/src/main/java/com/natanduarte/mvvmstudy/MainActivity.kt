@@ -1,5 +1,7 @@
 package com.natanduarte.mvvmstudy
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -16,6 +18,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     lateinit var viewModel: MainViewModel
+
+    private lateinit var link: String
 
     private val retrofitService = RetrofitService.getInstance()
 
@@ -38,12 +42,19 @@ class MainActivity : AppCompatActivity() {
             Log.i("DEV", "OnStart: $activity")
 
             binding.activity.text = activity.activity
-            binding.type.text = activity.type
-            binding.participants.text = activity.participants.toString()
-            binding.price.text = activity.price.toString()
-            binding.link.text = activity.link
-            binding.key.text = activity.key
-            binding.accessibility.text = activity.accessibility.toString()
+            binding.type.text = "type: ${activity.type}"
+            binding.participants.text = "participants: ${activity.participants}"
+            binding.price.text = "price: ${activity.price}"
+            link = activity.link!!
+            if (link.isNotBlank()) {
+                binding.link.isEnabled = true
+                binding.link.isClickable = true
+            } else {
+                binding.link.isEnabled = false
+                binding.link.isClickable = false
+            }
+            binding.key.text = "key: ${activity.key}"
+            binding.accessibility.text = "accessibility: ${activity.accessibility}"
         }
 
         viewModel.errorMessage.observe(this) { message ->
@@ -51,9 +62,19 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun openLink(link: String) {
+        val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(link))
+        startActivity(browserIntent)
+    }
+
     override fun onResume() {
         super.onResume()
 
         viewModel.getActivity()
+        binding.link.setOnClickListener {
+            if (link.isNotBlank()) {
+                openLink(link)
+            }
+        }
     }
 }
